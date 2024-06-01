@@ -44,7 +44,6 @@ class GameOverScene extends Phaser.Scene {
         restartButton.setPosition(this.sys.game.config.width / 2, this.sys.game.config.height - 50);
         restartButton.on('pointerup', () => {
             this.sound.play('buttonSfx');
-            
             this.scene.get('GameScene').data.set('score', 0);
             this.scene.start('GameScene');
         });

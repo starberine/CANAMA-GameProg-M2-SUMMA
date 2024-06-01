@@ -137,18 +137,27 @@ class GameScene2 extends Phaser.Scene {
     }
     handlePortalCollision(player, tile) {
         if (this.allCollectiblesCollected) {
-            
+            // Start the next scene with the current score and collectible count
+            this.scene.start('GameScene2', { score: this.score, collectibleCount: this.collectibleCount });
             this.gameBgm.stop();
+    
+            // Play win sound
             const winSound = this.sound.add('win_sfx');
-                    winSound.volume = 0.5;
-                    winSound.play();
-            this.scene.start('GameScene3',{ score: this.score, collectibleCount: this.collectibleCount });
+            winSound.volume = 0.5;
+            winSound.play();
         } else {
-            
+            // Show alert and wait for player to acknowledge
             alert('Collect all collectibles to enter the portal!');
-            this.scene.restart(); 
+    
+            // Reset the score after the alert is closed
+            this.score = 0;
+    
+            // Stop the background music and transition back to the first scene
+            this.gameBgm.stop();
+            this.scene.start('GameScene');
         }
     }
+    
     
 
     update() {

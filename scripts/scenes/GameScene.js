@@ -20,6 +20,7 @@ class GameScene extends Phaser.Scene {
         this.load.audio('gameBgm', 'assets/audio/bgm/game2_bgm.mp3');
         
     }
+    
 
     create(data) {
         
@@ -140,17 +141,24 @@ class GameScene extends Phaser.Scene {
             
             this.scene.start('GameScene2', { score: this.score, collectibleCount: this.collectibleCount });
             this.gameBgm.stop();
+    
+            
             const winSound = this.sound.add('win_sfx');
-                    winSound.volume = 0.5;
-                    winSound.play();
+            winSound.volume = 0.5;
+            winSound.play();
         } else {
             
             alert('Collect all collectibles to enter the portal!');
+    
+            
+            this.score = 0;
+    
+            
             this.gameBgm.stop();
-            this.scene.restart(); 
+            this.scene.restart();
         }
     }
-
+    
     update() {
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-160);
@@ -217,9 +225,7 @@ class GameScene extends Phaser.Scene {
     
         
         this.scene.start('GameOverScene', { score: this.score });
-    }
-    
-    
+    } 
 }
 
 export default GameScene;
