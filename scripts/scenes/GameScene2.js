@@ -25,7 +25,7 @@ class GameScene2 extends Phaser.Scene {
         
         const map2 = this.make.tilemap({ key: 'map2' });
         const tileset = map2.addTilesetImage('kokomi tileset', 'tileset');
-        const collectiblesNeeded = 120;
+        //const collectiblesNeeded = 120;
 
         
         
@@ -43,9 +43,9 @@ class GameScene2 extends Phaser.Scene {
         portalLayer.setCollisionByProperty({ collides: true });
 
     
-    if (this.score >= collectiblesNeeded) {
-        this.physics.add.collider(this.player, portalLayer);
-    }
+    // if (this.score >= collectiblesNeeded) {
+    //     this.physics.add.collider(this.player, portalLayer);
+    // }
 
         
         const floralLayer = map2.createLayer('keys', tileset);
@@ -135,28 +135,52 @@ class GameScene2 extends Phaser.Scene {
         this.cameras.main.setBackgroundColor('#917d8f'); 
         this.cameras.main.setZoom(1.5);
     }
+
     handlePortalCollision(player, tile) {
-        if (this.allCollectiblesCollected) {
-            // Start the next scene with the current score and collectible count
-            this.scene.start('GameScene2', { score: this.score, collectibleCount: this.collectibleCount });
-            this.gameBgm.stop();
+        this.gameBgm.stop();
+        const winSound = this.sound.add('win_sfx');
+        winSound.volume = 0.5;
+        winSound.play();
+        this.scene.start('GameScene3', { score: this.score, collectibleCount: this.collectibleCount });
+    }
+    collectCollectible(player, tile) {
+        if (tile) {
+            tile.tilemapLayer.removeTileAt(tile.x, tile.y);
     
-            // Play win sound
-            const winSound = this.sound.add('win_sfx');
-            winSound.volume = 0.5;
-            winSound.play();
-        } else {
-            // Show alert and wait for player to acknowledge
-            alert('Collect all collectibles to enter the portal!');
+            // Update score and display
+            // Inside collectCollectible method or any other relevant method where the score is updated
+                this.score += 10;
+                this.scoreText.setText('Score: ' + this.score);
+
+                // Set score using data manager
+                this.data.set('score', this.score);
+
     
-            // Reset the score after the alert is closed
-            this.score = 0;
-    
-            // Stop the background music and transition back to the first scene
-            this.gameBgm.stop();
-            this.scene.start('GameScene');
+            // Update collectible count and display
+            this.collectibleCount += 1;
+            this.collectibleText.setText('x ' + this.collectibleCount);
+            //this.data.set('score', this.collectibleCount);
+            // Play collect sound
+            const collectSound = this.sound.add('collect_sfx');
+            collectSound.volume = 0.5; 
+            collectSound.play();
         }
     }
+
+    playerCollideWater(player, water) {
+        
+        const gameOverSound = this.sound.add('gameover_sfx');
+        gameOverSound.volume = 0.2; 
+    
+        
+        this.gameBgm.stop();
+        gameOverSound.play();
+    
+        
+        this.scene.start('GameOverScene', { score: this.score });
+    }
+    
+    
     
     
 
@@ -180,57 +204,7 @@ class GameScene2 extends Phaser.Scene {
     this.player.setVelocityY(-300);
 }
 
-    }
-    collectCollectible(player, tile) {
-        console.log('Collectible touched');
-        
-        
-        if (tile) {
-            
-            tile.tilemapLayer.removeTileAt(tile.x, tile.y);
-    
-            
-            this.score += 10;
-            this.scoreText.setText('Score: ' + this.score);
-
-            this.data.set('score', this.score);
-    
-            this.collectibleCount += 1;
-            this.collectibleText.setText('x ' + this.collectibleCount);
-    
-            
-            const collectSound = this.sound.add('collect_sfx');
-            collectSound.volume = 0.5; 
-    
-            
-            collectSound.play();
-    
-            
-            const collectiblesNeeded = 12;
-            if (this.collectibleCount === collectiblesNeeded) {
-                this.allCollectiblesCollected = true; 
-     
-                
-               
-                
-                
-            }
-        }
-    }
-
-    playerCollideWater(player, water) {
-        
-        const gameOverSound = this.sound.add('gameover_sfx');
-        gameOverSound.volume = 0.2; 
-    
-        
-        this.gameBgm.stop();
-        gameOverSound.play();
-    
-        
-        this.scene.start('GameOverScene', { score: this.score });
-    }
-    
+    }   
     
 }
 

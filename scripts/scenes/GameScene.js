@@ -26,10 +26,7 @@ class GameScene extends Phaser.Scene {
         
         const map = this.make.tilemap({ key: 'map' });
         const tileset = map.addTilesetImage('kokomi tileset', 'tileset');
-        const collectiblesNeeded = 60;
-
-        
-        
+        //const collectiblesNeeded = 60;
 
         const platformLayer = map.createLayer('platform', tileset, 0, 0);
         platformLayer.setCollisionByProperty({ collides: true });
@@ -44,9 +41,9 @@ class GameScene extends Phaser.Scene {
         portalLayer.setCollisionByProperty({ collides: true });
 
 
-    if (this.score >= collectiblesNeeded) {
-        this.physics.add.collider(this.player, portalLayer);
-    }
+    // if (this.score >= collectiblesNeeded) {
+    //     this.physics.add.collider(this.player, portalLayer);
+    // }
 
         
         const floralLayer = map.createLayer('keys', tileset);
@@ -83,7 +80,7 @@ class GameScene extends Phaser.Scene {
         this.physics.add.overlap(this.player, collectiblesLayer);
         this.physics.add.collider(this.player, portalLayer, this.handlePortalCollision, null, this);
 
-        this.allCollectiblesCollected = false;
+        //this.allCollectiblesCollected = false;
       
     
         
@@ -119,6 +116,7 @@ class GameScene extends Phaser.Scene {
             strokeThickness: 4, 
             resolution: 5      
         }).setScrollFactor(0);
+        
         this.collectibleImage = this.add.image(170, 170, 'collect',{resolution: 5}).setScrollFactor(0).setScale(0.8);
         this.collectibleText = this.add.text(200, 150, 'x 0', {
             fontFamily: 'Butter',
@@ -136,29 +134,39 @@ class GameScene extends Phaser.Scene {
         this.cameras.main.setBackgroundColor('#917d8f'); 
         this.cameras.main.setZoom(1.5);
     }
+
     handlePortalCollision(player, tile) {
-        if (this.allCollectiblesCollected) {
-            
-            this.scene.start('GameScene2', { score: this.score, collectibleCount: this.collectibleCount });
-            this.gameBgm.stop();
-    
-            
-            const winSound = this.sound.add('win_sfx');
-            winSound.volume = 0.5;
-            winSound.play();
-        } else {
-            
-            alert('Collect all collectibles to enter the portal!');
-    
-            
-            this.score = 0;
-    
-            
-            this.gameBgm.stop();
-            this.scene.restart();
-        }
+        this.gameBgm.stop();
+        const winSound = this.sound.add('win_sfx');
+        winSound.volume = 0.5;
+        winSound.play();
+        this.scene.start('GameScene2', { score: this.score, collectibleCount: this.collectibleCount });
     }
     
+    collectCollectible(player, tile) {
+        if (tile) {
+            tile.tilemapLayer.removeTileAt(tile.x, tile.y);
+    
+            // Update score and display
+            // Inside collectCollectible method or any other relevant method where the score is updated
+                this.score += 10;
+                this.scoreText.setText('Score: ' + this.score);
+
+                // Set score using data manager
+                this.data.set('score', this.score);
+
+    
+            // Update collectible count and display
+            this.collectibleCount += 1;
+            this.collectibleText.setText('x ' + this.collectibleCount);
+            //this.data.set('score', this.collectibleCount);
+            // Play collect sound
+            const collectSound = this.sound.add('collect_sfx');
+            collectSound.volume = 0.5; 
+            collectSound.play();
+        }
+    }
+       
     update() {
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-160);
@@ -179,39 +187,8 @@ class GameScene extends Phaser.Scene {
     this.player.setVelocityY(-300);
 }
 
-    }
-    collectCollectible(player, tile) {
-        console.log('Collectible touched');
-        
-        
-        if (tile) {
-            
-            tile.tilemapLayer.removeTileAt(tile.x, tile.y);
-    
-            
-            this.score += 10;
-            this.scoreText.setText('Score: ' + this.score);
 
-            this.data.set('score', this.score);
-            this.data.set('collectibleCount', this.collectibleCount);
 
-    
-            this.collectibleCount += 1;
-            this.collectibleText.setText('x ' + this.collectibleCount);
-    
-            
-            const collectSound = this.sound.add('collect_sfx');
-            collectSound.volume = 0.5; 
-    
-            
-            collectSound.play();
-    
-            
-            const collectiblesNeeded = 6;
-            if (this.collectibleCount === collectiblesNeeded) {
-                this.allCollectiblesCollected = true; 
-            }
-        }
     }
 
     playerCollideWater(player, water) {

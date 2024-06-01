@@ -14,15 +14,8 @@ class GameOverScene extends Phaser.Scene {
         if (this.scene.get('MainMenuScene').bgm && this.scene.get('MainMenuScene').bgm.isPlaying) {
             this.scene.get('MainMenuScene').bgm.stop();
         }
-        const gameOver = this.add.image(400, 300, 'gameOver').setDisplaySize(800, 600);
-        
-        // Retrieve scores from all scenes
-        const score1 = this.scene.get('GameScene').data.get('score') || 0;
-        const score2 = this.scene.get('GameScene2').data.get('score') || 0;
-        const score3 = this.scene.get('GameScene3').data.get('score') || 0;
-
-        // Calculate the total score
-        const totalScore = score1 + score2 + score3;
+        const totalScore = data.score || 0;
+          const gameOver = this.add.image(400, 300, 'gameOver').setDisplaySize(800, 600);    
 
         const scoreText = this.add.text(400, 200, 'Total Score: ' + totalScore, {  fontFamily: 'Butter',
         fontSize: '32px',

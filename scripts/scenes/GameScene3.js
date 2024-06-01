@@ -135,20 +135,51 @@ class GameScene3 extends Phaser.Scene {
         this.cameras.main.setBackgroundColor('#917d8f'); 
         this.cameras.main.setZoom(1.5);
     }
+
     handlePortalCollision(player, tile) {
-        if (this.allCollectiblesCollected) {
-            
-            this.gameBgm.stop();
-            const winSound = this.sound.add('win_sfx');
-                    winSound.volume = 0.5;
-                    winSound.play();
-            this.scene.start('WinScene',{ score: this.score, collectibleCount: this.collectibleCount });
-        } else {
-            
-            alert('Collect all collectibles to enter the portal!');
-            this.scene.restart(); 
+        this.gameBgm.stop();
+        const winSound = this.sound.add('win_sfx');
+        winSound.volume = 0.5;
+        winSound.play();
+        this.scene.start('WinScene', { totalScore: this.score });
+    }
+    
+    collectCollectible(player, tile) {
+        if (tile) {
+            tile.tilemapLayer.removeTileAt(tile.x, tile.y);
+    
+            // Update score and display
+            // Inside collectCollectible method or any other relevant method where the score is updated
+                this.score += 10;
+                this.scoreText.setText('Score: ' + this.score);
+
+                // Set score using data manager
+                this.data.set('score', this.score);
+
+    
+            // Update collectible count and display
+            this.collectibleCount += 1;
+            this.collectibleText.setText('x ' + this.collectibleCount);
+            //this.data.set('score', this.collectibleCount);
+            // Play collect sound
+            const collectSound = this.sound.add('collect_sfx');
+            collectSound.volume = 0.5; 
+            collectSound.play();
         }
     }
+
+    playerCollideWater(player, water) {
+        const gameOverSound = this.sound.add('gameover_sfx');
+        gameOverSound.volume = 0.2; 
+    
+        this.gameBgm.stop();
+        gameOverSound.play();
+        this.score = 0;
+    
+        this.scene.start('GameOverScene', { score: this.score });
+    }
+    
+    
 
     update() {
         if (this.cursors.left.isDown) {
@@ -170,58 +201,7 @@ class GameScene3 extends Phaser.Scene {
     this.player.setVelocityY(-300);
 }
 
-    }
-    collectCollectible(player, tile) {
-        console.log('Collectible touched');
-        
-        
-        if (tile) {
-            
-            tile.tilemapLayer.removeTileAt(tile.x, tile.y);
-    
-            
-            this.score += 10;
-            this.scoreText.setText('Score: ' + this.score);
-            this.data.set('score', this.score);
-    
-            this.collectibleCount += 1;
-            this.collectibleText.setText('x ' + this.collectibleCount);
-            this.data.set('collectibleCount', this.collectibleCount);
-    
-            
-            const collectSound = this.sound.add('collect_sfx');
-            collectSound.volume = 0.5; 
-    
-            
-            collectSound.play();
-    
-            
-            const collectiblesNeeded = 18;
-            if (this.collectibleCount === collectiblesNeeded) {
-                this.allCollectiblesCollected = true; 
-      
-                
-                
-    
-                
-                
-            }
-        }
-    }
-
-    playerCollideWater(player, water) {
-        
-        const gameOverSound = this.sound.add('gameover_sfx');
-        gameOverSound.volume = 0.2; 
-    
-        
-        this.gameBgm.stop();
-        gameOverSound.play();
-    
-        
-        this.scene.start('GameOverScene', { score: this.score });
-    }
-    
+    }  
     
 }
 

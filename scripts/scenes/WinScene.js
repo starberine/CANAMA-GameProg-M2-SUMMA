@@ -9,19 +9,15 @@ class WinScene extends Phaser.Scene {
         this.load.audio('buttonSfx', 'assets/audio/sfx/button_sfx.mp3');
     }
 
-    create() {
+    create(data) {
         if (this.scene.get('MainMenuScene').bgm && this.scene.get('MainMenuScene').bgm.isPlaying) {
             this.scene.get('MainMenuScene').bgm.stop();
         }
 
-        // Retrieve scores from all scenes
-        //const score1 = this.scene.get('GameScene').data.get('score') || 0;
-        //const score2 = this.scene.get('GameScene2').data.get('score') || 0;
-        const score3 = this.scene.get('GameScene3').data.get('score') || 0;
-
+         //Retrieve scores from all scenes
+         const totalScore = data.totalScore || 0;
         const winbg = this.add.image(400, 300, 'win').setDisplaySize(800, 600);
-        
-        const scoreText = this.add.text(400, 400, 'Total Score: ' + score3, {
+        const scoreText = this.add.text(400, 400, 'Total Score: ' + totalScore, {
             fontFamily: 'Butter',
             fontSize: '32px',
             fill: '#FFFFFF',
@@ -37,7 +33,7 @@ class WinScene extends Phaser.Scene {
             this.sound.play('buttonSfx');
             this.scene.get('GameScene').data.set('score', 0);
             this.scene.start('MainMenuScene');
-            this.scene.start('MainMenuScene');
+
         });
     }
 }
