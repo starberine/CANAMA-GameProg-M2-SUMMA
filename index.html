@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CANAMA - KoVen! </title>
+    <link rel="icon" href="assets/images/icon.png" type="image/x-icon">
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #game-container {
+    width: 800px; 
+    height: 600px;
+    box-sizing: border-box; /* Ensure that the border width is included in the total width and height */
+}
+
+canvas {
+    margin: auto;
+    display: block;
+    border: 10px solid rgb(255, 209, 253);
+    border-radius: 10px;
+}
+
+    </style>
+</head>
+<body>
+    <script src="/scripts/phaser.js"></script>
+    <script type = "module" src = "/scripts/main.js"></script>
+</body>
+</html>
